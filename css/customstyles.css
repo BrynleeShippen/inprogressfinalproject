@@ -1,0 +1,44 @@
+h1{
+    color: rgb(0, 0, 0);
+}
+body{
+    background-color: rgba(99, 164, 220, 0.427);
+    color: rgb(1, 0, 0);
+    font-family:'Courier New', Courier, monospace;
+}
+.main-content{
+    margin-left:300px;
+    padding:20px;
+}
+.sidebar{
+    background-color: white;
+    width: 200px;
+    height: 100%;
+    left: 0;
+    padding: 15px;
+    position:fixed;
+}
+.sidebar ul{
+    list-style;none;
+    padding:0px;
+    width: 100% ;
+}
+.sidebar ul li{
+    margin:15px 0;
+    width: 100%;
+}
+.sidebar ul li a{
+    color: white;
+    text-decoration:underline;
+    color: rgb(0, 0, 0);
+}
+.navbar {
+    padding:10px;
+    display:flex;
+    justify-content: space-around;
+    align-items: center;
+    color: black;
+}
+.navbar a{
+    color:black;
+}

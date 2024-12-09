@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../index.html/">AI webapp</a></li>
+    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="html/scratch.html">Scratch Page</a></li>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #282c34;
+            color: white;
+            position: relative;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+            position: relative;
+        }
+        .cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 100px;
+            background-color: #444;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .cell.taken {
+            pointer-events: none;
+            cursor: default;
+        }
+        #message {
+            margin-top: 20px;
+        }
+        #reset {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #444;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        #reset:hover {
+            background-color: #555;
+        }
+        #startOverlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            font-size: 18px;
+            z-index: 1;
+        }
+        #startOverlay:hover {
+            background-color: rgba(50, 50, 50, 0.9);
+        }
+    </style>
+</head>
+<body>
+    <h1>Tic-Tac-Toe</h1>
+    <div id="startOverlay">Start Game</div>
+    <div class="board" id="board"></div>
+    <div id="message"></div>
+    <button id="reset" style="display: none;">Play Again</button>
+    <script>
+        const board = document.getElementById('board');
+        const message = document.getElementById('message');
+        const resetButton = document.getElementById('reset');
+        const startOverlay = document.getElementById('startOverlay');
+        let cells = Array(9).fill(null);
+        let isPlayerTurn = true;
+
+        // Initialize the board
+        function createBoard() {
+            board.innerHTML = '';
+            cells.forEach((_, index) => {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.dataset.index = index;
+                cell.addEventListener('click', () => makeMove(index, 'X'));
+                board.appendChild(cell);
+            });
+            message.textContent = '';
+            resetButton.style.display = 'none';
+        }
+
+        // Make a move
+        function makeMove(index, symbol) {
+            if (!cells[index]) {
+                cells[index] = symbol;
+                const cell = board.children[index];
+                cell.textContent = symbol;
+                cell.classList.add('taken');
+
+                if (checkWin(symbol)) {
+                    message.textContent = `${symbol} wins!`;
+                    endGame();
+                } else if (cells.every(cell => cell)) {
+                    message.textContent = 'It\'s a tie!';
+                    endGame();
+                } else {
+                    if (symbol === 'X') {
+                        isPlayerTurn = false;
+                        setTimeout(computerMove, 500);
+                    }
+                }
+            }
+        }
+
+        // Computer's move
+        function computerMove() {
+            const availableMoves = cells
+                .map((cell, index) => (cell ? null : index))
+                .filter(index => index !== null);
+
+            const randomMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+            makeMove(randomMove, 'O');
+            isPlayerTurn = true;
+        }
+
+        // Check for a win
+        function checkWin(symbol) {
+            const winningCombinations = [
+                [0, 1, 2],
+                [3, 4, 5],
+                [6, 7, 8],
+                [0, 3, 6],
+                [1, 4, 7],
+                [2, 5, 8],
+                [0, 4, 8],
+                [2, 4, 6]
+            ];
+            return winningCombinations.some(combination =>
+                combination.every(index => cells[index] === symbol)
+            );
+        }
+
+        // End the game
+        function endGame() {
+            Array.from(board.children).forEach(cell => cell.classList.add('taken'));
+            resetButton.style.display = 'block';
+        }
+
+        // Reset the game
+        resetButton.addEventListener('click', () => {
+            cells = Array(9).fill(null);
+            isPlayerTurn = true;
+            createBoard();
+        });
+
+        // Start the game
+        startOverlay.addEventListener('click', () => {
+            startOverlay.style.display = 'none';
+            createBoard();
+        });
+    </script>
+</body>
+</html>
